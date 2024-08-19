@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 Fuzhou Rockchip Electronics Co.Ltd.
+# Copyright (C) 2024 Fuzhou Rockchip Electronics Co.Ltd.
 #
 # Modification based on code covered by the Apache License, Version 2.0 (the "License").
 # You may not use this software except in compliance with the License.
@@ -34,6 +34,10 @@
 # limitations under the License.
 LOCAL_PATH := $(call my-dir)
 ifeq ($(strip $(BOARD_USES_LIBSVEP)),true)
+	BOARD_USES_LIBSVEP_SR := true
+endif
+
+ifeq ($(strip $(BOARD_USES_LIBSVEP_SR)),true)
 
 include $(CLEAR_VARS)
 # RK3588
@@ -50,7 +54,7 @@ endif
 TARGET_SVEP_HEAD_PATH := ${LOCAL_PATH}/../../lib/Android/$(TARGET_SOC_PLATFORM)/include
 
 
-LOCAL_MODULE := sr-demo
+LOCAL_MODULE := sr_demo
 LOCAL_SHARED_LIBRARIES := \
   libcutils \
   liblog \
@@ -59,8 +63,6 @@ LOCAL_SHARED_LIBRARIES := \
   libsync_vendor \
   librga \
   libz \
-  libOpenCL \
-  librknnrt-svep \
   libsvepsr
 
 LOCAL_C_INCLUDES := \

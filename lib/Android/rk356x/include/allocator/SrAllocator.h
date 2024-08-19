@@ -38,7 +38,7 @@ public:
               uint64_t usage, std::string requestorName, uint32_t* byte_stride,
               int* size, uint64_t* buffer_id);
     int Lock(int fd, int size, void** vaddr);
-    int UnLock(void* vaddr, int size);
+    int UnLock(int fd, void* vaddr, int size);
     int Free(uint64_t buffer_id);
 
 private:

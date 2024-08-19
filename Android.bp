@@ -1,0 +1,35 @@
+bootstrap_go_package {
+    name: "soong-libsvepsr",
+    pkgPath: "android/soong/libsvepsr",
+    deps: [
+        "blueprint",
+        "blueprint-pathtools",
+        "soong",
+        "soong-android",
+        "soong-cc",
+        "soong-genrule",
+    ],
+    srcs: [
+          "Android.go",
+    ],
+    pluginFor: ["soong_build"],
+}
+
+cc_libsvepsr_prebuilt_library_shared {
+    name: "libsvepsr",
+    compile_multilib: "both",
+
+    // some prop generate by Android.go
+
+    strip: {
+        none: true,
+    },
+
+    check_elf_files: false,
+    vendor_available: true,
+
+    required: [
+        "SrOsd.ttf",
+        "vendor-storage-test",
+    ],
+}

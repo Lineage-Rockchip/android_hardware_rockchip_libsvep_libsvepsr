@@ -50,7 +50,9 @@ public:
     int Lock(void** vaddr);
     int UnLock(void* vaddr);
     int DumpData();
+    int DumpData(const char* file_name);
     int FillFromFile(const char* file_name);
+    int Clear();
 
 private:
     uint64_t uId;

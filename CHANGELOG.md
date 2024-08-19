@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 2.2.0
+
+- 新增：支持RK3576 480p/540p/720p/1080p模型
+- 新增：支持SR后级缩放与格式转换
+- 新增：授权码支持UFS，解决
+- 新增：更新Android 11/12/13/14 SurfaceFlinger 补丁与对应文档说明
+- 优化：优化算法处理耗时：
+    - 分配不带cache的npu输出内存，减少刷cache的时间
+    - 将所有 rknn_create_mem 修改为 rknn_create_mem2 uncahce buffer
+- 修复：修复若干稳定性问题
+- 修改：移除对librknnrt-svep.so依赖
+
+## 2.1.1b3
+- 解决SrBuffer类函数unlock未刷cpu cache问题
+
 ## 2.1.1b2
 - 解决Linux平台OSD模块概率出现Segment Fault问题
 - 解决概率出现输出有OSD但没有SR效果问题
