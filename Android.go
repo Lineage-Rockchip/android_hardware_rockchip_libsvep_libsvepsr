@@ -89,5 +89,8 @@ func getLibsvepsrHeader(ctx android.LoadHookContext) ([]string) {
 
 func getTargetSoc(ctx android.LoadHookContext) (string) {
     var target_board_platform string = ctx.AConfig().Getenv("TARGET_BOARD_PLATFORM")
+    if (target_board_platform == "") {
+        target_board_platform = ctx.Config().VendorConfig("core_rockchip").String("platform")
+    }
     return target_board_platform
 }
