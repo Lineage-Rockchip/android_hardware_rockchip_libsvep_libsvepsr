@@ -35,8 +35,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
   set(SR_LIB_HEAD_PATH ${SR_RESOURCE_PATH}/include)
   set(SR_LIBS
     ${SR_LIB_ARCH_PATH}/libsvepsr.so
-    ${SR_LIB_ARCH_PATH}/libOpenCL.so
-    ${SR_LIB_ARCH_PATH}/librknnrt-svep.so)
+    ${SR_LIB_ARCH_PATH}/libOpenCL.so)
   include_directories(${SR_LIB_HEAD_PATH})
 else()
   set(SR_LIB_ARCH_PATH ${SR_RESOURCE_PATH}/${LIB_ARCH})

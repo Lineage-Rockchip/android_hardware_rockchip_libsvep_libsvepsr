@@ -59,10 +59,10 @@ extern "C"
 {
 #endif
     /*
-     * vendor_storage_init_v2 must be call first
+     * svep_vendor_storage_init_v2 must be call first
      * rerurn： ret=0 succes   ret<0 failed
      */
-    int vendor_storage_init_v2(void);
+    int svep_vendor_storage_init_v2(void);
 
     /*
      * vendor_storage_write

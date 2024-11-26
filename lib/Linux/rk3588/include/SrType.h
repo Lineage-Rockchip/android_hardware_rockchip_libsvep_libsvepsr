@@ -14,7 +14,7 @@
 #include <cwchar>
 #include "SrVersion.h"
 // Verison info
-#define SR_MAGIC   0x83991906
+#define SR_MAGIC 0x83991906
 
 #ifdef __ANDROID__
 // Android Property
@@ -36,13 +36,21 @@
 #define SR_OSD_VIDEO_ONELINE_CNT 360
 
 // Vendor Storage ID.
-#define SR_VENDOR_AUTH_ID           "ro.vendor.svep.vsid"
+#define SR_VENDOR_AUTH_ID "ro.vendor.svep.vsid"
+// Auth by json file.
+#define SR_AUTH_JSON_PATH           "vendor.svep.json_path"
 
 #define SR_CONTRAST_MODE_ENABLE     1
 #define SR_CONTRAST_MODE_LINE_WIDTH 4;
 
 // Debug Property.
 #define SR_DEBUG_NAME "vendor.svep.log"
+
+#else
+// Debug Property.
+#define SR_DEBUG_NAME     "RKSR_LOG_LEVEL"
+// Auth by json file.
+#define SR_AUTH_JSON_PATH "RKSR_AUTH_JSON_PATH"
 #endif
 
 // OSD string interface.
@@ -58,6 +66,7 @@ enum SrError
     BadInit,         /* 初始化错误   */
     BadOperate,      /* 操作错误     */
     FailAndTryAgain, /* 失败并再尝试  */
+    RkauthTrial,     /* 算法试用模式  */
 };
 
 enum SrMode

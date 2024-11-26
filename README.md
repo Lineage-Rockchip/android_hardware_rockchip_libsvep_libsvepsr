@@ -39,6 +39,7 @@ SR 软件架构如下图：
 | RK3576   | 支持  | 支持    |
 | RK3566   | 支持  | 支持    |
 | RK3568   | 支持  | 支持    |
+| RK3562   | 支持  | 支持    |
 
 
 
@@ -51,8 +52,8 @@ SR 软件架构如下图：
 
 
 ## 信息记录
-
-- Latest version : 2.1.1b2 (Release version)
+- Latest Beta version : 2.2.1b2
+- Latest Rlease version : 2.2.0
 
 
 
@@ -68,9 +69,9 @@ SR 软件架构如下图：
 ```shell
 .
 ├── CHANGELOG.md   ## 更新说明
-├── docs           ## 文档目录                               
+├── docs           ## 文档目录
 │   ├── Rockchip_API_Reference_SVEP_SR_CN.pdf             ## API说明文档
-│   ├── Rockchip_Developer_Guide_Android_SVEP_SR_CN.pdf   ## Android 开发文档 
+│   ├── Rockchip_Developer_Guide_Android_SVEP_SR_CN.pdf   ## Android 开发文档
 │   ├── Rockchip_Tutorial_Android_SVEP_SR_CN.pdf          ## 搭建SR演示环境教程文档
 │   └── Rockchip_Application_Notes_Storage_CN.pdf         ## VendorStorage 说明文档
 ├── examples        ## SR用例目录
@@ -83,6 +84,18 @@ SR 软件架构如下图：
 
 
 ## 更新说明
+
+## 2.2.1b2
+
+- 新增：支持RK3562平台支持，支持 540p/720p/1080p 算法模型
+- 新增：RK3562 性能测试数据
+
+## 2.2.1b1
+
+- 新增：支持算法JSON鉴权方式
+- 新增：支持算法试用逻辑，试用时间为开机30分钟内
+- 优化：优化写码工具，支持向 VendorStorage 写 1024长度的离线授权激活码
+- 更新：文档增加JSON授权说明章节
 
 ## 2.2.0
 

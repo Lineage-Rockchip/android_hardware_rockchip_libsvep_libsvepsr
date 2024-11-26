@@ -5,7 +5,7 @@
 #include "vendor_storage_v1.h"
 #include "vendor_storage_v2.h"
 
-#define SR_VENDOR_STORAGE_MAX_LEN 256
+#define SR_VENDOR_STORAGE_MAX_LEN 2048
 
 int main(int argc, char **argv)
 {
@@ -18,10 +18,10 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    // vendor_storage_init_v2 主要是由于Android 13/14 适配GKI版本添加
+    // svep_vendor_storage_init_v2 主要是由于Android 13/14 适配GKI版本添加
     // 目前仅支持UFS版本的初始化
-    int ufs_ret = vendor_storage_init_v2();
-    if (ufs_ret == 0)
+    int ret = svep_vendor_storage_init_v2();
+    if (ret == 0)
     {
         if (argc == 4)
         {
@@ -52,9 +52,9 @@ int main(int argc, char **argv)
                         id);
                 return -1;
             }
-            printf("Write Success:  id=%d len=%d code = %s (UFS)\n", id, len,
+            printf("V2 Write Success:  id=%d len=%d code = %s\n", id, len,
                    data);
-            char read_buffer[256]; // Assume maximum data length for simplicity
+            char read_buffer[2048]; // Assume maximum data length for simplicity
             // 从vendor存储读取数据
             if (vendor_storage_read(id, read_buffer, len) < 0)
             {
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
                         "Error reading from vendor storage with ID %d\n", id);
                 return -1;
             }
-            printf("Read Success:  id=%d len=%d code = %s (UFS)\n", id, len,
+            printf("V2 Read Success:  id=%d len=%d code = %s\n", id, len,
                    read_buffer);
         }
 
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
             uint32 id  = atoi(argv[1]);
             uint32 len = atoi(argv[2]);
 
-            char read_buffer[256]; // Assume maximum data length for simplicity
+            char read_buffer[2048]; // Assume maximum data length for simplicity
             // 从vendor存储读取数据
             if (vendor_storage_read(id, read_buffer, len) < 0)
             {
@@ -79,14 +79,14 @@ int main(int argc, char **argv)
                         "Error reading from vendor storage with ID %d\n", id);
                 return -1;
             }
-            printf("Read  Success:  id=%d len=%d code = %s (UFS)\n", id, len,
+            printf("V2 Read  Success:  id=%d len=%d code = %s\n", id, len,
                    read_buffer);
         }
         return 0;
     }
     else
     {
-        // printf("vendor_storage_init_v2 ufs init fail, try to call"
+        // printf("svep_vendor_storage_init_v2 ufs init fail, try to call"
         //        "vendor_storage_init_v1 by emmc.\n");
         if (argc == 4)
         {
@@ -95,50 +95,54 @@ int main(int argc, char **argv)
             char *data = argv[3];
 
             // 写入数据到vendor存储
-            if (vendor_storage_write_test(id, len, data) < 0)
+            ret = vendor_storage_write_test(id, len, data);
+            if (ret < 0)
             { // Include null-terminator
                 fprintf(stderr,
                         "EMMC: Error writing to vendor storage with ID %d, "
-                        "ufs_ret=%d\n",
-                        id, ufs_ret);
+                        "ret=%d\n",
+                        id, ret);
                 return -1;
             }
-            printf("Write Success:  id=%d len=%d code = %s (EMMC)\n", id, len,
+            printf("V1 Write Success:  id=%d len=%d code = %s\n", id, len,
                    data);
 
-            char read_buffer[256]; // Assume maximum data length for simplicity
+            char read_buffer[2048] = {0};
+            ; // Assume maximum data length for simplicity
             // 从vendor存储读取数据
-            if (vendor_storage_read_test(id, len, read_buffer) < 0)
+            ret = vendor_storage_read_test(id, len, read_buffer);
+            if (ret < 0)
             {
                 fprintf(stderr,
                         "EMMC: Error reading from vendor storage with ID %d, "
-                        "ufs_ret=%d\n",
-                        id, ufs_ret);
+                        "ret=%d\n",
+                        id, ret);
                 return -1;
             }
 
-            printf("Read  Success:  id=%d len=%d code = %s (EMMC)\n", id, len,
+            printf("V1 Read  Success:  id=%d len=%d code = %s\n", id, len,
                    read_buffer);
         }
 
         if (argc == 3)
         {
-            u16 id                = atoi(argv[1]);
-            u16 len               = atoi(argv[2]);
+            u16 id                 = atoi(argv[1]);
+            u16 len                = atoi(argv[2]);
 
-            char read_buffer[256] = {
+            char read_buffer[2048] = {
                 0}; // Assume maximum data length for simplicity
             // 从vendor存储读取数据
-            if (vendor_storage_read_test(id, len, read_buffer) < 0)
+            ret = vendor_storage_read_test(id, len, read_buffer);
+            if (ret < 0)
             {
                 fprintf(stderr,
-                        "EMMC: Error reading from vendor storage with ID %d, "
-                        "ufs_ret=%d\n",
-                        id, ufs_ret);
+                        "V1 Error reading from vendor storage with ID %d, "
+                        "ret=%d\n",
+                        id, ret);
                 return -1;
             }
 
-            printf("Read  Success:  id=%d len=%d code = %s (EMMC)\n", id, len,
+            printf("V1 Read Success:  id=%d len=%d code = %s (EMMC)\n", id, len,
                    read_buffer);
             ;
         }

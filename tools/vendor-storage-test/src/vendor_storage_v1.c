@@ -1,4 +1,5 @@
 
+#define LOG_TAG "SvepAuth"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,7 +30,7 @@ int vendor_storage_read_test(u16 id, u16 len, void *read_buffer)
     u8 p_buf[2048] = {0}; /* malloc req buffer or used extern buffer */
     struct rk_vendor_req *req;
     req    = (struct rk_vendor_req *)p_buf;
-    sys_fd = open("/dev/vendor_storage", O_RDWR, 0);
+    sys_fd = open("/dev/vendor_storage", O_RDONLY, 0);
     if (sys_fd < 0)
     {
         printf("/dev/vendor_storage open fail, error=%s\n", strerror(errno));

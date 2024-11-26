@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "SvepVST"
+#define LOG_TAG "SvepAuth"
 
 #include <string.h>
 #include <stdlib.h>
@@ -40,9 +40,8 @@
 #include <pthread.h>
 
 #include "vendor_storage_v2.h"
+#include "utils/Log.h"
 // #define LOG_TAG "Vendor_storage"
-
-#define EMMC_USE_DEV_VENDOR_STORAGE 1
 
 #define EMMC_IDB_PART_OFFSET        64
 #define EMMC_SYS_PART_OFFSET        8064
@@ -69,11 +68,18 @@ struct vendor_info
 static struct vendor_info *g_sr_vendor = NULL;
 #define RK_MMC_MAX_DEVICES   3
 #define EMMC_MAX_PATH_LENGTH 32
-#define EMMC_DEV_PATH        "/dev/block/mmcblk"
-#define UFS_DEV_PATH         "/dev/block/by-name/sda"
+
+#ifdef __ANDROID__
+#define EMMC_DEV_PATH "/dev/block/mmcblk"
+#define UFS_DEV_PATH  "/dev/block/by-name/sda"
+#else
+#define EMMC_DEV_PATH "/dev/mmcblk"
+#define UFS_DEV_PATH  "/dev/by-name/sda"
+#endif
+
 static char g_sr_emmc_path[EMMC_MAX_PATH_LENGTH];
 
-pthread_mutex_t g_sr_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t g_svep_sr_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 #define ALIGN(x, a)                  __ALIGN_KERNEL((x), (a))
 #define __ALIGN_KERNEL(x, a)         __ALIGN_KERNEL_MASK(x, (typeof(x))(a)-1)
@@ -102,7 +108,6 @@ static int emmc_vendor_ops(uint8 *buffer, uint32 addr, uint32 n_sec, int write)
     return 0;
 }
 
-#if (EMMC_USE_DEV_VENDOR_STORAGE == 0)
 static int emmc_vendor_storage_init(void)
 {
     uint32 i, max_ver, max_index;
@@ -185,7 +190,6 @@ static int emmc_vendor_storage_init(void)
 error_exit:
     return -EIO;
 }
-#endif
 
 static int ufs_vendor_storage_init(void)
 {
@@ -252,11 +256,11 @@ error_exit:
 
 int vendor_storage_read(uint32 id, void *pbuf, uint32 size)
 {
-    pthread_mutex_lock(&g_sr_mutex);
+    pthread_mutex_lock(&g_svep_sr_mutex);
     uint32 i;
     if (!g_sr_vendor)
     {
-        pthread_mutex_unlock(&g_sr_mutex);
+        pthread_mutex_unlock(&g_svep_sr_mutex);
         return -ENOMEM;
     }
 
@@ -267,17 +271,17 @@ int vendor_storage_read(uint32 id, void *pbuf, uint32 size)
             if (size > g_sr_vendor->item[i].size)
                 size = g_sr_vendor->item[i].size;
             memcpy(pbuf, &g_sr_vendor->data[g_sr_vendor->item[i].offset], size);
-            pthread_mutex_unlock(&g_sr_mutex);
+            pthread_mutex_unlock(&g_svep_sr_mutex);
             return size;
         }
     }
-    pthread_mutex_unlock(&g_sr_mutex);
+    pthread_mutex_unlock(&g_svep_sr_mutex);
     return (-1);
 }
 
 int vendor_storage_write(uint32 id, void *pbuf, uint32 size)
 {
-    pthread_mutex_lock(&g_sr_mutex);
+    pthread_mutex_lock(&g_svep_sr_mutex);
     uint32 i, j, next_index, align_size, alloc_size, item_num;
     uint32 offset, next_size;
     uint8 *p_data;
@@ -287,7 +291,7 @@ int vendor_storage_write(uint32 id, void *pbuf, uint32 size)
 
     if (!g_sr_vendor)
     {
-        pthread_mutex_unlock(&g_sr_mutex);
+        pthread_mutex_unlock(&g_svep_sr_mutex);
         return -ENOMEM;
     }
 
@@ -370,16 +374,16 @@ int vendor_storage_write(uint32 id, void *pbuf, uint32 size)
     }
     ret = -1;
 exit:
-    pthread_mutex_unlock(&g_sr_mutex);
+    pthread_mutex_unlock(&g_svep_sr_mutex);
     return ret;
 }
 
-int vendor_storage_init_v2(void)
+int svep_vendor_storage_init_v2(void)
 {
-    pthread_mutex_lock(&g_sr_mutex);
+    pthread_mutex_lock(&g_svep_sr_mutex);
     if (g_sr_vendor != NULL)
     {
-        pthread_mutex_unlock(&g_sr_mutex);
+        pthread_mutex_unlock(&g_svep_sr_mutex);
         return 0;
     }
 
@@ -387,44 +391,41 @@ int vendor_storage_init_v2(void)
     g_sr_vendor = malloc(sizeof(*g_sr_vendor));
     if (!g_sr_vendor)
     {
-        pthread_mutex_unlock(&g_sr_mutex);
+        pthread_mutex_unlock(&g_svep_sr_mutex);
         return -ENOMEM;
     }
 
     ret = ufs_vendor_storage_init();
     if (!ret)
     {
-        pthread_mutex_unlock(&g_sr_mutex);
+        pthread_mutex_unlock(&g_svep_sr_mutex);
         return 0;
     }
 
-#if (EMMC_USE_DEV_VENDOR_STORAGE == 0)
     ret = emmc_vendor_storage_init();
     if (!ret)
     {
-        pthread_mutex_unlock(&g_sr_mutex);
+        pthread_mutex_unlock(&g_svep_sr_mutex);
         return 0;
     }
     else
     {
-        printf("vendor_storage_init_v2 failed ret=%d", ret);
         free(g_sr_vendor);
         g_sr_vendor = NULL;
     }
-#endif
 
-    pthread_mutex_unlock(&g_sr_mutex);
+    pthread_mutex_unlock(&g_svep_sr_mutex);
     return ret;
 }
 
 int free_vendor_storage_v2(void)
 {
-    pthread_mutex_lock(&g_sr_mutex);
+    pthread_mutex_lock(&g_svep_sr_mutex);
     if (g_sr_vendor != NULL)
     {
         free(g_sr_vendor);
         g_sr_vendor = NULL;
     }
-    pthread_mutex_unlock(&g_sr_mutex);
+    pthread_mutex_unlock(&g_svep_sr_mutex);
     return 0;
 }

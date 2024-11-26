@@ -11,6 +11,7 @@ var SUPPORT_TARGET_PLATFORM = [...]string{
     "rk356x",
     "rk3588",
     "rk3576",
+    "rk3562",
 }
 
 func init() {
