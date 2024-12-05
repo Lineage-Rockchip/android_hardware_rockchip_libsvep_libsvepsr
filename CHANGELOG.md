@@ -1,4 +1,11 @@
 # CHANGELOG
+## 2.2.1b3
+
+- 修改：Android 平台调整部分属性接口命名
+    - vendor.svep.version 修改为 debug.svep.version
+    - 新增 debug.svep.log 日志调试属性
+- 新增：Android 平台新增 sys.svep.json_path 属性，用于system进程设置json路径
+- 修改：授权逻辑调整 json 路径判断逻辑，从 vendor/system 两个路径尝试获取json文件信息
 
 ## 2.2.1b2
 

@@ -19,7 +19,7 @@
 #define SVEPSR_VERSION_MAJOR    2
 #define SVEPSR_VERSION_MINOR    2
 #define SVEPSR_VERSION_REVISION 1
-#define SVEPSR_VERSION_SUFFIX   "b2"
+#define SVEPSR_VERSION_SUFFIX   "b3"
 
 #define SVEPSR_CORE_VERSION                                    \
     "libsvepsr version: " STR(SVEPSR_VERSION_MAJOR) "." STR(   \
